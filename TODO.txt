@@ -1,0 +1,16 @@
+Working:
+	Loginserver
+		- Account login
+		- Account auto register
+		- Server list
+
+TODO:
+	Loginserver
+		- News
+		- El Morad/Karus king and king notice
+
+	Common
+		Handle packet secuence id and checksum in packet
+
+	Gameserver
+		ALL :)
