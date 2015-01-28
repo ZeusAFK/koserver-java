@@ -1,11 +1,11 @@
-package koserver.login.services;
+package koserver.game.services;
 
 import java.io.IOException;
 
 import koserver.common.network.SocketServer;
 import koserver.common.network.config.ServerConfig;
 import koserver.common.services.AbstractService;
-import koserver.login.configuration.NetworkConfig;
+import koserver.game.configuration.NetworkConfig;
 
 import org.apache.log4j.Logger;
 
@@ -20,7 +20,7 @@ public class NetworkService extends AbstractService {
 
 	@Override
 	public void onInit() {
-		server = new SocketServer(new ServerConfig(NetworkConfig.LOGIN_BIND_ADDRESS, NetworkConfig.LOGIN_BIND_PORT));
+		server = new SocketServer(new ServerConfig(NetworkConfig.GAME_BIND_ADDRESS, NetworkConfig.GAME_BIND_PORT));
 		try {
 			server.open();
 		} catch (IOException e) {

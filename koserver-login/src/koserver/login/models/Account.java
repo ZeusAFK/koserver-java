@@ -2,8 +2,8 @@ package koserver.login.models;
 
 import java.util.Date;
 
+import koserver.common.enums.AccountAuthority;
 import koserver.common.models.AbstractModel;
-import koserver.login.enums.AccountAuthority;
 import koserver.login.services.AccountService;
 
 public class Account extends AbstractModel {

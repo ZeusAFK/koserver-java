@@ -1,17 +1,15 @@
-package koserver.common.network;
+package koserver.common.utils;
 
-import koserver.common.utils.ArrayUtils;
-
-public class Packet {
-
-	private int opcode;
+public class ByteArrayReader {
 	private byte[] data;
 	private int position;
 
-	public Packet(int opcode) {
-		this.opcode = opcode;
-		data = new byte[0];
-		position = 0;
+	public ByteArrayReader() {
+
+	}
+
+	public ByteArrayReader(byte[] data) {
+		this.data = data;
 	}
 
 	public void setData(byte[] data) {
@@ -20,10 +18,6 @@ public class Packet {
 
 	public byte[] getData() {
 		return data;
-	}
-
-	public int getOpcode() {
-		return opcode;
 	}
 
 	public void appendData(byte[] data) {

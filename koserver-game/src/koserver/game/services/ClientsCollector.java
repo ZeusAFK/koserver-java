@@ -1,4 +1,4 @@
-package koserver.login.services;
+package koserver.game.services;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -25,7 +25,10 @@ public class ClientsCollector extends AbstractService implements Runnable {
 		this.onInit();
 		while (server.isConnected()) {
 			Socket clientSocket = server.waitForConnection();
-			//log.info("Connection received on port " + clientSocket.getLocalPort() + " from " + clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort());
+			// log.info("Connection received on port " +
+			// clientSocket.getLocalPort() + " from " +
+			// clientSocket.getInetAddress().getHostAddress() + ":" +
+			// clientSocket.getPort());
 			if (clientSocket != null) {
 				AccountService client = new AccountService(clientSocket);
 				clients.add(client);
@@ -42,7 +45,8 @@ public class ClientsCollector extends AbstractService implements Runnable {
 
 	@Override
 	public void onInit() {
-		//log.info("Clients connections service started on port " + server.getPort());
+		// log.info("Clients connections service started on port " +
+		// server.getPort());
 	}
 
 	@Override

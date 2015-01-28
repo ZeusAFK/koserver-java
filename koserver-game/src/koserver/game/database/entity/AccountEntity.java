@@ -1,9 +1,13 @@
-package koserver.login.database.entity;
+package koserver.game.database.entity;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import koserver.common.database.entity.AbstractDatabaseEntity;
@@ -43,6 +47,9 @@ public class AccountEntity extends AbstractDatabaseEntity {
 
 	@Column(name = "access")
 	private Date access;
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.ALL)
+    private Set<PlayerEntity> players;
 
 	public AccountEntity(final Integer id) {
 		super(id);
@@ -131,4 +138,12 @@ public class AccountEntity extends AbstractDatabaseEntity {
 	public void setAccess(Date access) {
 		this.access = access;
 	}
+	
+	public Set<PlayerEntity> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(final Set<PlayerEntity> players) {
+        this.players = players;
+    }
 }
