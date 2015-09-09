@@ -10,7 +10,8 @@
 		<property name="hibernate.connection.url">jdbc:mysql://localhost/koserver</property>
 		<property name="hibernate.connection.username">root</property>
 		<property name="hibernate.connection.password">root</property>
-
-		<property name="hbm2ddl.auto">update</property>
+		<property name="hibernate.show_sql">false</property>
+        
+        <property name="hbm2ddl.auto">update</property>
 	</session-factory>
 </hibernate-configuration>

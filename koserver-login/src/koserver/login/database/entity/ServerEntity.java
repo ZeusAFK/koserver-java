@@ -21,13 +21,13 @@ public class ServerEntity extends AbstractDatabaseEntity {
     @Column(name = "name")
     private String name;
     
-    @Column(name = "userCount")
+    @Column(name = "user_count")
     private short userCount;
 
-	@Column(name = "userMax")
+	@Column(name = "user_max")
     private short userMax;
 
-	@Column(name = "userMaxFree")
+	@Column(name = "user_max_free")
     private short userMaxFree;
     
     public String getIp() {

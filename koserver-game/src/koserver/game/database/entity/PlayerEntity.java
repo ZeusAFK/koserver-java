@@ -21,7 +21,7 @@ public class PlayerEntity extends AbstractDatabaseEntity {
 
 	private static final long serialVersionUID = 1630861678711998407L;
 
-	@Column
+	@Column(name = "character_slot")
 	private int characterSlot;
 
 	@Column(unique = true)
@@ -30,7 +30,7 @@ public class PlayerEntity extends AbstractDatabaseEntity {
 	@Column
 	private short race;
 
-	@Column(name = "class")
+	@Column(name = "player_class")
 	private short playerClass;
 
 	@Column
@@ -39,13 +39,13 @@ public class PlayerEntity extends AbstractDatabaseEntity {
 	@Column
 	private int face;
 
-	@Column
+	@Column(name = "player_level")
 	private int level;
 
 	@Column
 	private long experience;
 
-	@Column()
+	@Column(name = "player_money")
 	private int money;
 
 	@Column
@@ -69,34 +69,34 @@ public class PlayerEntity extends AbstractDatabaseEntity {
 	@Column
 	private short magic;
 
-	@Column(columnDefinition = "DATETIME")
+	@Column(columnDefinition = "TIMESTAMP", name = "creation_time")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationTime;
 
-	@Column(columnDefinition = "DATETIME")
+	@Column(columnDefinition = "TIMESTAMP", name = "deletion_time")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deletionTime;
 
-	@Column(columnDefinition = "DATETIME")
+	@Column(columnDefinition = "TIMESTAMP", name = "last_online_time")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastOnlineTime;
 
-	@Column(length = 1000)
+	@Column(length = 1000, name = "player_items")
 	private byte[] items;
 
-	@Column()
+	@Column(name="map_id")
 	private int mapId;
 
-	@Column()
+	@Column(name = "player_x")
 	private float x;
 
-	@Column()
+	@Column(name = "player_y")
 	private float y;
 
-	@Column()
+	@Column(name = "player_z")
 	private float z;
 
-	@Column()
+	@Column(name = "player_online")
 	private boolean online;
 
 	@ManyToOne(fetch = FetchType.EAGER)

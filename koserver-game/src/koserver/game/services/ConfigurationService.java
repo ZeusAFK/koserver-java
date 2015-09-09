@@ -6,6 +6,7 @@ import koserver.common.config.ConfigurableProcessor;
 import koserver.common.services.AbstractService;
 import koserver.common.utils.PropertiesUtils;
 import koserver.game.configuration.GameConfig;
+import koserver.game.configuration.GlobalConfig;
 import koserver.game.configuration.NetworkConfig;
 import koserver.game.configuration.PlayerConfig;
 
@@ -28,6 +29,7 @@ public class ConfigurationService extends AbstractService {
 			ConfigurableProcessor.process(NetworkConfig.class, properties);
 			ConfigurableProcessor.process(GameConfig.class, properties);
 			ConfigurableProcessor.process(PlayerConfig.class, properties);
+			ConfigurableProcessor.process(GlobalConfig.class, properties);
 		} catch (final Exception e) {
 			log.fatal("Can't load gameserver configurations", e);
 			throw new Error("Can't load gameserver configurations", e);

@@ -55,6 +55,8 @@ public class AccountService extends AbstractService implements Runnable {
 	}
 
 	public void onAccountConnect(final AccountEntity account) {
+		account.setAccess(new Date());
+		AccountDelegate.updateAccountEntity(account);
 		log.info("Account " + account.getLogin() + " connected succefully");
 	}
 

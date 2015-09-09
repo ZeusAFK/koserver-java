@@ -1,11 +1,14 @@
 package koserver.game.services;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import koserver.common.services.AbstractService;
 import koserver.game.delegate.PlayerDelegate;
 import koserver.game.models.account.Account;
 import koserver.game.models.player.Player;
+import koserver.game.tasks.AbstractTask;
+import koserver.game.tasks.player.PlayerQuitTask;
 
 import org.apache.log4j.Logger;
 
@@ -58,11 +61,6 @@ public class PlayerService extends AbstractService {
 		PlayerDelegate.updatePlayerModel(player);
 	}
 
-	public void onPlayerCheckNameUsed(final AccountService connection, final short type, final String name) {
-		// connection.sendPacket(new
-		// SM_CHARACTER_USERNAME_CHECK((this.findPlayerByName(name) == null)));
-	}
-
 	// ---- EVENT ---- //
 
 	public void registerPlayer(final AccountService connection, final Player player) {
@@ -70,6 +68,12 @@ public class PlayerService extends AbstractService {
 		player.setAccount(connection.getAccount());
 
 		this.onPlayerConnect(player);
+	}
+
+	public void disconnectPlayer(final Player player) {
+		AbstractTask<Player> task = null;
+		task = new PlayerQuitTask(player);
+		ThreadPoolService.getInstance().scheduleTask(task, 0, TimeUnit.SECONDS);
 	}
 
 	/** CRUD OPERATIONS */
@@ -80,6 +84,7 @@ public class PlayerService extends AbstractService {
 
 		final boolean creationSuccess = checkPlayerRequiremens(account, player);
 		if (creationSuccess) {
+			player.setCreationTime(new Date());
 			PlayerDelegate.createPlayerModel(player);
 		}
 

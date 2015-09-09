@@ -55,6 +55,11 @@ public class PacketHandler {
 		case GS_ALLCHAR_INFO_REQ:
 			AllCharacterInforRequestHandler(packet);
 			break;
+		case GS_SPEEDHACK_CHECK:
+			SpeedHackCheckRequestHandler(packet);
+			break;
+		case GS_SELECT_CHARACTER:
+			SelectCharacterRequestHandler(packet);
 		default:
 			log.warn("Unknow packet opcode> " + packet.getOpcode());
 			log.warn(HexDump.dumpHexString(packet.getData()));
@@ -134,9 +139,7 @@ public class PacketHandler {
 		packetWriter.sendPacket(packet);
 	}
 
-	public void CharacterCreationHandler(Packet packet) {
-		log.info("Packet accepted> GS_CREATE_CHARACTER");
-
+	private void CharacterCreationHandler(Packet packet) {
 		int slot = packet.getInt8();
 		String name = packet.getString();
 		short race = packet.getInt8();
@@ -170,5 +173,30 @@ public class PacketHandler {
 		packet = new Packet(GS_CREATE_CHARACTER);
 		packet.appendInt8(result);
 		packetWriter.sendPacket(packet);
+	}
+
+	private void SpeedHackCheckRequestHandler(Packet packet) {
+		// TODO: Implement speck hack check handler
+	}
+
+	private void SelectCharacterRequestHandler(Packet packet) {
+		String AccountId = packet.getString();
+		String UserId = packet.getString();
+		short bInit = packet.getShort();
+		packet = new Packet(GS_SELECT_CHARACTER);
+		for (Player player : accountService.getAccount().getPlayers()) {
+			Player connectedPlayer = PlayerService.getInstance().findPlayerByName(UserId);
+			if (connectedPlayer != null && connectedPlayer.isOnline() && !connectedPlayer.getAccount().getConnection().getSocket().equals(accountService.getSocket())) {
+				PlayerService.getInstance().registerPlayer(accountService, player);
+				packet.appendShort(bInit);
+				packetWriter.sendPacket(packet);
+				return;
+			} else if (player.getAccount().getLogin().equals(AccountId) && player.getName().equals(UserId)) {
+				packet.appendString(UserId);
+				packet.appendShort(bInit);
+				packetWriter.sendPacket(packet);
+				return;
+			}
+		}
 	}
 }

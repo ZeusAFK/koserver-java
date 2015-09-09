@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="../build/lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="../build/lib/mysql-connector-java-5.1.32-bin.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/koserver-common"/>
+	<classpathentry kind="lib" path="C:/Users/Kurokami/Documents/Eclipse Projects/dap6-lib/ojdbc6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="../build/lib/javolution-5.3.1.jar"/>
 	<classpathentry kind="lib" path="../build/lib/commons-beanutils-1.9.1.jar"/>
 	<classpathentry kind="lib" path="../build/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kurokami/Documents/Eclipse Projects/dap6-lib/ojdbc6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

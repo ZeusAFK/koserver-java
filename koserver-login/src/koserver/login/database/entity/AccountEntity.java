@@ -26,13 +26,13 @@ public class AccountEntity extends AbstractDatabaseEntity {
 	@Column(name = "authority")
 	private int authority;
 
-	@Column(name = "sealPassword")
+	@Column(name = "seal_password")
 	private String sealPassword;
 
 	@Column(name = "cash")
 	private int cash;
 
-	@Column(name = "birhDate")
+	@Column(name = "birh_date")
 	private Date birthDate;
 
 	@Column(name = "email")
@@ -41,7 +41,7 @@ public class AccountEntity extends AbstractDatabaseEntity {
 	@Column(name = "creation")
 	private Date creation;
 
-	@Column(name = "access")
+	@Column(name = "last_access")
 	private Date access;
 
 	public AccountEntity(final Integer id) {
