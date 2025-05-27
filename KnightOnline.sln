@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnightOnline.Common", "KnightOnline.Common\KnightOnline.Common.csproj", "{77B74A53-E3CB-44D6-8142-84B0E4BE3D0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnightOnline.Data", "KnightOnline.Data\KnightOnline.Data.csproj", "{2E828478-78E5-44C4-9108-A7E5FC51AF4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnightOnline.LoginServer", "KnightOnline.LoginServer\KnightOnline.LoginServer.csproj", "{A3FF7881-31B0-4EF7-AA86-E7F80A92B642}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnightOnline.GameServer", "KnightOnline.GameServer\KnightOnline.GameServer.csproj", "{7B90F463-B7E7-47B9-8168-3BA75527AEE7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{77B74A53-E3CB-44D6-8142-84B0E4BE3D0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77B74A53-E3CB-44D6-8142-84B0E4BE3D0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77B74A53-E3CB-44D6-8142-84B0E4BE3D0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77B74A53-E3CB-44D6-8142-84B0E4BE3D0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E828478-78E5-44C4-9108-A7E5FC51AF4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E828478-78E5-44C4-9108-A7E5FC51AF4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E828478-78E5-44C4-9108-A7E5FC51AF4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E828478-78E5-44C4-9108-A7E5FC51AF4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3FF7881-31B0-4EF7-AA86-E7F80A92B642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3FF7881-31B0-4EF7-AA86-E7F80A92B642}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3FF7881-31B0-4EF7-AA86-E7F80A92B642}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3FF7881-31B0-4EF7-AA86-E7F80A92B642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B90F463-B7E7-47B9-8168-3BA75527AEE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B90F463-B7E7-47B9-8168-3BA75527AEE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B90F463-B7E7-47B9-8168-3BA75527AEE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B90F463-B7E7-47B9-8168-3BA75527AEE7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
