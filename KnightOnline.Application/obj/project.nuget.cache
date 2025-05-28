@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "ouKBAr8fQwM=",
+  "success": true,
+  "projectFilePath": "/app/KnightOnline.Application/KnightOnline.Application.csproj",
+  "expectedPackageFiles": [
+    "/home/swebot/.nuget/packages/mediatr/12.5.0/mediatr.12.5.0.nupkg.sha512",
+    "/home/swebot/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
+    "/home/swebot/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

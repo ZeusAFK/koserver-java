@@ -32,19 +32,6 @@
           }
         }
       },
-      "MediatR.Extensions.Microsoft.DependencyInjection/11.1.0": {
-        "type": "package",
-        "dependencies": {
-          "MediatR": "[11.0.0, 12.0.0)",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0"
-        },
-        "compile": {
-          "lib/netstandard2.1/MediatR.Extensions.Microsoft.DependencyInjection.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.1/MediatR.Extensions.Microsoft.DependencyInjection.dll": {}
-        }
-      },
       "Microsoft.Extensions.DependencyInjection.Abstractions/8.0.0": {
         "type": "package",
         "compile": {
@@ -61,20 +48,6 @@
           "buildTransitive/net6.0/_._": {}
         }
       },
-      "KnightOnline.Application/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v8.0",
-        "dependencies": {
-          "KnightOnline.Domain": "1.0.0",
-          "MediatR": "12.5.0"
-        },
-        "compile": {
-          "bin/placeholder/KnightOnline.Application.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/KnightOnline.Application.dll": {}
-        }
-      },
       "KnightOnline.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
@@ -83,20 +56,6 @@
         },
         "runtime": {
           "bin/placeholder/KnightOnline.Domain.dll": {}
-        }
-      },
-      "KnightOnline.Infrastructure/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v8.0",
-        "dependencies": {
-          "KnightOnline.Application": "1.0.0",
-          "KnightOnline.Domain": "1.0.0"
-        },
-        "compile": {
-          "bin/placeholder/KnightOnline.Infrastructure.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/KnightOnline.Infrastructure.dll": {}
         }
       }
     }
@@ -133,19 +92,6 @@
         "mediatr.contracts.nuspec"
       ]
     },
-    "MediatR.Extensions.Microsoft.DependencyInjection/11.1.0": {
-      "sha512": "RW3etRuy6Xp63cgqfC0r/ITOtUT0f9ymJl1+1XZdzsYUsfv7WBPC2kXGOP8IYpY/6c4Q6805vbIW/88DopUs3w==",
-      "type": "package",
-      "path": "mediatr.extensions.microsoft.dependencyinjection/11.1.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "gradient_128x128.png",
-        "lib/netstandard2.1/MediatR.Extensions.Microsoft.DependencyInjection.dll",
-        "mediatr.extensions.microsoft.dependencyinjection.11.1.0.nupkg.sha512",
-        "mediatr.extensions.microsoft.dependencyinjection.nuspec"
-      ]
-    },
     "Microsoft.Extensions.DependencyInjection.Abstractions/8.0.0": {
       "sha512": "cjWrLkJXK0rs4zofsK4bSdg+jhDLTaxrkXu4gS6Y7MAlCvRyNNgwY/lJi5RDlQOnSZweHqoyvgvbdvQsRIW+hg==",
       "type": "package",
@@ -178,28 +124,16 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "KnightOnline.Application/1.0.0": {
-      "type": "project",
-      "path": "../KnightOnline.Application/KnightOnline.Application.csproj",
-      "msbuildProject": "../KnightOnline.Application/KnightOnline.Application.csproj"
-    },
     "KnightOnline.Domain/1.0.0": {
       "type": "project",
       "path": "../KnightOnline.Domain/KnightOnline.Domain.csproj",
       "msbuildProject": "../KnightOnline.Domain/KnightOnline.Domain.csproj"
-    },
-    "KnightOnline.Infrastructure/1.0.0": {
-      "type": "project",
-      "path": "../KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj",
-      "msbuildProject": "../KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-      "KnightOnline.Application >= 1.0.0",
-      "KnightOnline.Infrastructure >= 1.0.0",
-      "MediatR >= 12.5.0",
-      "MediatR.Extensions.Microsoft.DependencyInjection >= 11.1.0"
+      "KnightOnline.Domain >= 1.0.0",
+      "MediatR >= 12.5.0"
     ]
   },
   "packageFolders": {
@@ -208,11 +142,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/app/KnightOnline.GameServer/KnightOnline.GameServer.csproj",
-      "projectName": "KnightOnline.GameServer",
-      "projectPath": "/app/KnightOnline.GameServer/KnightOnline.GameServer.csproj",
+      "projectUniqueName": "/app/KnightOnline.Application/KnightOnline.Application.csproj",
+      "projectName": "KnightOnline.Application",
+      "projectPath": "/app/KnightOnline.Application/KnightOnline.Application.csproj",
       "packagesPath": "/home/swebot/.nuget/packages/",
-      "outputPath": "/app/KnightOnline.GameServer/obj/",
+      "outputPath": "/app/KnightOnline.Application/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/swebot/.nuget/NuGet/NuGet.Config"
@@ -227,11 +161,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "/app/KnightOnline.Application/KnightOnline.Application.csproj": {
-              "projectPath": "/app/KnightOnline.Application/KnightOnline.Application.csproj"
-            },
-            "/app/KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj": {
-              "projectPath": "/app/KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj"
+            "/app/KnightOnline.Domain/KnightOnline.Domain.csproj": {
+              "projectPath": "/app/KnightOnline.Domain/KnightOnline.Domain.csproj"
             }
           }
         }
@@ -254,10 +185,6 @@
           "MediatR": {
             "target": "Package",
             "version": "[12.5.0, )"
-          },
-          "MediatR.Extensions.Microsoft.DependencyInjection": {
-            "target": "Package",
-            "version": "[11.1.0, )"
           }
         },
         "imports": [
@@ -279,17 +206,5 @@
         "runtimeIdentifierGraphPath": "/home/jules/.dotnet/sdk/8.0.410/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1608",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Detected package version outside of dependency constraint: MediatR.Extensions.Microsoft.DependencyInjection 11.1.0 requires MediatR (>= 11.0.0 && < 12.0.0) but version MediatR 12.5.0 was resolved.",
-      "libraryId": "MediatR",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
+  }
 }

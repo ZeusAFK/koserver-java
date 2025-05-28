@@ -1,8 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\KnightOnline.Common\KnightOnline.Common.csproj" />
-    <ProjectReference Include="..\KnightOnline.Data\KnightOnline.Data.csproj" />
+    <ProjectReference Include="..\KnightOnline.Application\KnightOnline.Application.csproj" />
+    <ProjectReference Include="..\KnightOnline.Infrastructure\KnightOnline.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
   </ItemGroup>
 
   <PropertyGroup>

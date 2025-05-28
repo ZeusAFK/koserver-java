@@ -4,14 +4,82 @@
     "/app/KnightOnline.LoginServer/KnightOnline.LoginServer.csproj": {}
   },
   "projects": {
-    "/app/KnightOnline.LoginServer/KnightOnline.LoginServer.csproj": {
+    "/app/KnightOnline.Application/KnightOnline.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/app/KnightOnline.LoginServer/KnightOnline.LoginServer.csproj",
-        "projectName": "KnightOnline.LoginServer",
-        "projectPath": "/app/KnightOnline.LoginServer/KnightOnline.LoginServer.csproj",
+        "projectUniqueName": "/app/KnightOnline.Application/KnightOnline.Application.csproj",
+        "projectName": "KnightOnline.Application",
+        "projectPath": "/app/KnightOnline.Application/KnightOnline.Application.csproj",
         "packagesPath": "/home/swebot/.nuget/packages/",
-        "outputPath": "/app/KnightOnline.LoginServer/obj/",
+        "outputPath": "/app/KnightOnline.Application/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/swebot/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/app/KnightOnline.Domain/KnightOnline.Domain.csproj": {
+                "projectPath": "/app/KnightOnline.Domain/KnightOnline.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.5.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/home/jules/.dotnet/sdk/8.0.410/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/app/KnightOnline.Domain/KnightOnline.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/app/KnightOnline.Domain/KnightOnline.Domain.csproj",
+        "projectName": "KnightOnline.Domain",
+        "projectPath": "/app/KnightOnline.Domain/KnightOnline.Domain.csproj",
+        "packagesPath": "/home/swebot/.nuget/packages/",
+        "outputPath": "/app/KnightOnline.Domain/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/swebot/.nuget/NuGet/NuGet.Config"
@@ -42,6 +110,146 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/home/jules/.dotnet/sdk/8.0.410/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/app/KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/app/KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj",
+        "projectName": "KnightOnline.Infrastructure",
+        "projectPath": "/app/KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj",
+        "packagesPath": "/home/swebot/.nuget/packages/",
+        "outputPath": "/app/KnightOnline.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/swebot/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/app/KnightOnline.Application/KnightOnline.Application.csproj": {
+                "projectPath": "/app/KnightOnline.Application/KnightOnline.Application.csproj"
+              },
+              "/app/KnightOnline.Domain/KnightOnline.Domain.csproj": {
+                "projectPath": "/app/KnightOnline.Domain/KnightOnline.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/home/jules/.dotnet/sdk/8.0.410/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/app/KnightOnline.LoginServer/KnightOnline.LoginServer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/app/KnightOnline.LoginServer/KnightOnline.LoginServer.csproj",
+        "projectName": "KnightOnline.LoginServer",
+        "projectPath": "/app/KnightOnline.LoginServer/KnightOnline.LoginServer.csproj",
+        "packagesPath": "/home/swebot/.nuget/packages/",
+        "outputPath": "/app/KnightOnline.LoginServer/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/swebot/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/app/KnightOnline.Application/KnightOnline.Application.csproj": {
+                "projectPath": "/app/KnightOnline.Application/KnightOnline.Application.csproj"
+              },
+              "/app/KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj": {
+                "projectPath": "/app/KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.5.0, )"
+            },
+            "MediatR.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[11.1.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
