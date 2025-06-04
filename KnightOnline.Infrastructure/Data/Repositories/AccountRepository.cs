@@ -24,7 +24,7 @@ namespace KnightOnline.Infrastructure.Data.Repositories
         {
             return await _dbContext.Set<Account>().FirstOrDefaultAsync(a => a.Username == username);
         }
-        
+
         public async Task<Account?> GetByEmailAsync(string email)
         {
             return await _dbContext.Set<Account>().FirstOrDefaultAsync(a => a.Email == email);

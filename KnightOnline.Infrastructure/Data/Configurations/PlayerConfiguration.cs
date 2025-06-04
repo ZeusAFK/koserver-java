@@ -29,7 +29,7 @@ namespace KnightOnline.Infrastructure.Data.Configurations
                    .HasConversion(accountId => accountId.Value,
                                   dbValue => UserId.FromGuid(dbValue))
                    .IsRequired();
-            
+
             // If you had a navigation property to Account, you'd configure it here.
             // builder.HasOne<Account>() // Assuming Account entity exists
             //        .WithMany() // Assuming Account can have multiple players (characters)

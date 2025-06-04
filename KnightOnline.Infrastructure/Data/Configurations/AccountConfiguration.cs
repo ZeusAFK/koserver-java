@@ -26,9 +26,9 @@ namespace KnightOnline.Infrastructure.Data.Configurations
             builder.Property(a => a.Email)
                    .IsRequired()
                    .HasMaxLength(255);
-                   
+
             builder.HasIndex(a => a.Email).IsUnique();
-            
+
             // Other properties...
             // Relationships...
         }

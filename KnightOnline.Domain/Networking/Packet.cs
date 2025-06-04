@@ -35,7 +35,7 @@ namespace KnightOnline.Domain.Networking
         {
             return _stream.ToArray();
         }
-        
+
         // Get the underlying stream's buffer (more advanced, careful with usage)
         public MemoryStream GetStream()
         {
@@ -79,7 +79,7 @@ namespace KnightOnline.Domain.Networking
             WriteUShort((ushort)stringBytes.Length); // Length prefix
             Writer.Write(stringBytes);
         }
-        
+
         // Writes a fixed-length string, padded or truncated
         public void WriteFixedString(string value, int fixedLength)
         {
@@ -89,7 +89,7 @@ namespace KnightOnline.Domain.Networking
 
             int bytesToCopy = Math.Min(stringBytes.Length, fixedLength);
             Array.Copy(stringBytes, buffer, bytesToCopy);
-            
+
             Writer.Write(buffer);
         }
 
@@ -105,7 +105,7 @@ namespace KnightOnline.Domain.Networking
                 return _reader;
             }
         }
-        
+
         public long Position => _stream.Position;
         public long Length => _stream.Length;
         public long BytesRemaining => _stream.Length - _stream.Position;
@@ -132,7 +132,7 @@ namespace KnightOnline.Domain.Networking
             byte[] stringBytes = Reader.ReadBytes(length);
             return Encoding.UTF8.GetString(stringBytes);
         }
-        
+
         // Reads a fixed-length string
         public string ReadFixedString(int fixedLength)
         {

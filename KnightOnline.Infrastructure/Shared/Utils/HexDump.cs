@@ -120,7 +120,7 @@ namespace KnightOnline.Infrastructure.Shared.Utils
             }
             return Convert.ToHexString(array);
         }
-        
+
         // The Java toByteArray(byte b) and toByteArray(int i) are not strictly needed
         // as Convert.ToHexString takes byte[] directly and BitConverter handles int to byte[].
 
