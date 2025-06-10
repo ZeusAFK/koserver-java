@@ -10,6 +10,7 @@ using KnightOnline.Infrastructure.Configuration.Models;
 using System;
 using System.Threading.Tasks;
 using KnightOnline.LoginServer.Features.System.Handlers; // For VersionRequestHandler
+using KnightOnline.LoginServer.Features.Authentication.Handlers; // For LoginRequestHandler
 
 public class Program
 {
@@ -26,7 +27,10 @@ public class Program
                 services.AddSingleton(appSettings);
                 services.AddSingleton(appSettings.LoginServer.Network);
 
+                // MediatR will scan the assembly containing AccountDto (i.e., KnightOnline.Application)
+                // and register all handlers including LoginCommandHandler.
                 services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<KnightOnline.Application.DTOs.AccountDto>());
+
                 services.AddDbContext<AppDbContext>(options =>
                     options.UseInMemoryDatabase("KnightOnlineLoginDB"));
                 services.AddScoped<KnightOnline.Application.Contracts.Infrastructure.IAccountRepository, KnightOnline.Infrastructure.Data.Repositories.AccountRepository>();
@@ -36,11 +40,11 @@ public class Program
                 services.AddSingleton<IPacketDispatcher, PacketDispatcher>();
                 services.AddSingleton<SocketListener>();
 
-                // Register Packet Handlers (as Scoped or Transient if they have scoped dependencies like DbContext)
-                // For VersionRequestHandler, it depends on AppSettings (Singleton), so it can be Singleton or Transient.
-                // Let's register it as Transient for now, which is a safe default for handlers.
+                // Register Packet Handlers
+                // VersionRequestHandler depends on AppSettings (Singleton), can be Transient or Singleton.
                 services.AddTransient<VersionRequestHandler>();
-                // If there were many handlers, you might use assembly scanning to register all IPacketHandler implementations.
+                // LoginRequestHandler depends on IMediator (Scoped from AddMediatR, effectively), can be Transient.
+                services.AddTransient<LoginRequestHandler>();
 
                 Console.WriteLine("LoginServer services configured.");
             })
@@ -50,11 +54,12 @@ public class Program
         var packetDispatcher = host.Services.GetRequiredService<IPacketDispatcher>();
 
         // Resolve and register VersionRequestHandler
-        // If handlers are registered as services themselves (as above with AddTransient)
         var versionHandler = host.Services.GetRequiredService<VersionRequestHandler>();
         packetDispatcher.RegisterHandler(versionHandler);
-        // Alternatively, if handlers were not in DI but simple to instantiate:
-        // packetDispatcher.RegisterHandler(new VersionRequestHandler(host.Services.GetRequiredService<AppSettings>()));
+
+        // Resolve and register LoginRequestHandler
+        var loginHandler = host.Services.GetRequiredService<LoginRequestHandler>();
+        packetDispatcher.RegisterHandler(loginHandler);
 
         Console.WriteLine("Packet handlers registered.");
 
