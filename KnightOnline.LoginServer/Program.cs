@@ -1,50 +1,77 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-// using KnightOnline.Application; // For MediatR registration from Application layer - MediatR now added directly
-using KnightOnline.Infrastructure.Data; // For AppDbContext
-using Microsoft.EntityFrameworkCore; // For UseInMemoryDatabase
-using KnightOnline.Application.Contracts.Infrastructure; // For repository interfaces
-using KnightOnline.Infrastructure.Data.Repositories; // For repository implementations
-using System; // For Console
-using System.Threading.Tasks; // For Task
+using Microsoft.Extensions.Configuration;
+using KnightOnline.Application.Contracts.Networking;
+using KnightOnline.Infrastructure.Networking;
+using KnightOnline.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using KnightOnline.Infrastructure.Configuration;
+using KnightOnline.Infrastructure.Configuration.Models;
+using System;
+using System.Threading.Tasks;
+using KnightOnline.LoginServer.Features.System.Handlers; // For VersionRequestHandler
 
 public class Program
 {
     public static async Task Main(string[] args)
     {
         var host = Host.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                // Configuration setup
+            })
             .ConfigureServices((hostContext, services) =>
             {
-                // Register MediatR
-                // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(KnightOnline.Application.AssemblyReference).Assembly));
-                // For now, let's do it more explicitly if AssemblyReference isn't created.
-                // Using a type from KnightOnline.Application to get its assembly for MediatR registration.
+                var appSettings = ConfigLoader.Load();
+                services.AddSingleton(appSettings);
+                services.AddSingleton(appSettings.LoginServer.Network);
+
                 services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<KnightOnline.Application.DTOs.AccountDto>());
-
-
-                // Register EF Core DbContext
-                // Using InMemory for now, connection string would come from IConfiguration in a real app
                 services.AddDbContext<AppDbContext>(options =>
                     options.UseInMemoryDatabase("KnightOnlineLoginDB"));
+                services.AddScoped<KnightOnline.Application.Contracts.Infrastructure.IAccountRepository, KnightOnline.Infrastructure.Data.Repositories.AccountRepository>();
 
-                // Register Repositories (example)
-                services.AddScoped<IAccountRepository, AccountRepository>();
-                // services.AddScoped<IPlayerRepository, PlayerRepository>(); // Not typically needed by LoginServer directly
+                // Networking Services
+                services.AddSingleton<PacketFrameReader>();
+                services.AddSingleton<IPacketDispatcher, PacketDispatcher>();
+                services.AddSingleton<SocketListener>();
 
-                // Register other services from Application or Infrastructure as needed
-                // e.g., services.AddTransient<INetworkService, NetworkService>();
+                // Register Packet Handlers (as Scoped or Transient if they have scoped dependencies like DbContext)
+                // For VersionRequestHandler, it depends on AppSettings (Singleton), so it can be Singleton or Transient.
+                // Let's register it as Transient for now, which is a safe default for handlers.
+                services.AddTransient<VersionRequestHandler>();
+                // If there were many handlers, you might use assembly scanning to register all IPacketHandler implementations.
 
-                // TODO: Add other services for LoginServer
                 Console.WriteLine("LoginServer services configured.");
             })
             .Build();
 
-        Console.WriteLine("LoginServer starting...");
-        // Application logic would start here, e.g.
-        // var networkService = host.Services.GetRequiredService<INetworkService>();
-        // await networkService.StartServerAsync(15100);
+        // Register packet handlers with the dispatcher
+        var packetDispatcher = host.Services.GetRequiredService<IPacketDispatcher>();
 
-        await host.RunAsync(); // Or custom run logic
-        Console.WriteLine("LoginServer stopped.");
+        // Resolve and register VersionRequestHandler
+        // If handlers are registered as services themselves (as above with AddTransient)
+        var versionHandler = host.Services.GetRequiredService<VersionRequestHandler>();
+        packetDispatcher.RegisterHandler(versionHandler);
+        // Alternatively, if handlers were not in DI but simple to instantiate:
+        // packetDispatcher.RegisterHandler(new VersionRequestHandler(host.Services.GetRequiredService<AppSettings>()));
+
+        Console.WriteLine("Packet handlers registered.");
+
+        // Start the SocketListener
+        var listener = host.Services.GetRequiredService<SocketListener>();
+        listener.Start();
+
+        // Setup graceful shutdown
+        var applicationLifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
+        applicationLifetime.ApplicationStopping.Register(() =>
+        {
+            Console.WriteLine("LoginServer application stopping. Stopping listener...");
+            listener.Stop();
+        });
+
+        Console.WriteLine("LoginServer starting host.RunAsync()...");
+        await host.RunAsync();
+        Console.WriteLine("LoginServer host has stopped.");
     }
 }
