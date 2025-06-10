@@ -9,8 +9,9 @@ using KnightOnline.Infrastructure.Configuration;
 using KnightOnline.Infrastructure.Configuration.Models;
 using System;
 using System.Threading.Tasks;
-using KnightOnline.LoginServer.Features.System.Handlers; // For VersionRequestHandler
-using KnightOnline.LoginServer.Features.Authentication.Handlers; // For LoginRequestHandler
+using KnightOnline.LoginServer.Features.System.Handlers;
+using KnightOnline.LoginServer.Features.Authentication.Handlers;
+using KnightOnline.LoginServer.Features.Security.Handlers; // For EncryptionKeyExchangeHandler
 
 public class Program
 {
@@ -27,8 +28,6 @@ public class Program
                 services.AddSingleton(appSettings);
                 services.AddSingleton(appSettings.LoginServer.Network);
 
-                // MediatR will scan the assembly containing AccountDto (i.e., KnightOnline.Application)
-                // and register all handlers including LoginCommandHandler.
                 services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<KnightOnline.Application.DTOs.AccountDto>());
 
                 services.AddDbContext<AppDbContext>(options =>
@@ -41,10 +40,9 @@ public class Program
                 services.AddSingleton<SocketListener>();
 
                 // Register Packet Handlers
-                // VersionRequestHandler depends on AppSettings (Singleton), can be Transient or Singleton.
                 services.AddTransient<VersionRequestHandler>();
-                // LoginRequestHandler depends on IMediator (Scoped from AddMediatR, effectively), can be Transient.
                 services.AddTransient<LoginRequestHandler>();
+                services.AddTransient<EncryptionKeyExchangeHandler>(); // Added this handler
 
                 Console.WriteLine("LoginServer services configured.");
             })
@@ -53,13 +51,9 @@ public class Program
         // Register packet handlers with the dispatcher
         var packetDispatcher = host.Services.GetRequiredService<IPacketDispatcher>();
 
-        // Resolve and register VersionRequestHandler
-        var versionHandler = host.Services.GetRequiredService<VersionRequestHandler>();
-        packetDispatcher.RegisterHandler(versionHandler);
-
-        // Resolve and register LoginRequestHandler
-        var loginHandler = host.Services.GetRequiredService<LoginRequestHandler>();
-        packetDispatcher.RegisterHandler(loginHandler);
+        packetDispatcher.RegisterHandler(host.Services.GetRequiredService<VersionRequestHandler>());
+        packetDispatcher.RegisterHandler(host.Services.GetRequiredService<LoginRequestHandler>());
+        packetDispatcher.RegisterHandler(host.Services.GetRequiredService<EncryptionKeyExchangeHandler>()); // Added this handler
 
         Console.WriteLine("Packet handlers registered.");
 
