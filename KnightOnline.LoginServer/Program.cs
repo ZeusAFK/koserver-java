@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 using KnightOnline.LoginServer.Features.System.Handlers;
 using KnightOnline.LoginServer.Features.Authentication.Handlers;
 using KnightOnline.LoginServer.Features.Security.Handlers;
-using KnightOnline.LoginServer.Features.Server.Handlers; // For ServerListRequestHandler
+using KnightOnline.LoginServer.Features.Server.Handlers;
+using KnightOnline.LoginServer.Features.News.Handlers; // For NewsRequestHandler
 
 public class Program
 {
@@ -30,7 +31,7 @@ public class Program
                 services.AddSingleton(appSettings.LoginServer.Network);
 
                 // MediatR will scan the assembly containing AccountDto (i.e., KnightOnline.Application)
-                // and register all handlers including GetServerListQueryHandler.
+                // and register all handlers including GetNewsQueryHandler.
                 services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<KnightOnline.Application.DTOs.AccountDto>());
 
                 services.AddDbContext<AppDbContext>(options =>
@@ -46,7 +47,8 @@ public class Program
                 services.AddTransient<VersionRequestHandler>();
                 services.AddTransient<LoginRequestHandler>();
                 services.AddTransient<EncryptionKeyExchangeHandler>();
-                services.AddTransient<ServerListRequestHandler>(); // Added this handler
+                services.AddTransient<ServerListRequestHandler>();
+                services.AddTransient<NewsRequestHandler>(); // Added this handler
 
                 Console.WriteLine("LoginServer services configured.");
             })
@@ -58,7 +60,8 @@ public class Program
         packetDispatcher.RegisterHandler(host.Services.GetRequiredService<VersionRequestHandler>());
         packetDispatcher.RegisterHandler(host.Services.GetRequiredService<LoginRequestHandler>());
         packetDispatcher.RegisterHandler(host.Services.GetRequiredService<EncryptionKeyExchangeHandler>());
-        packetDispatcher.RegisterHandler(host.Services.GetRequiredService<ServerListRequestHandler>()); // Added this handler
+        packetDispatcher.RegisterHandler(host.Services.GetRequiredService<ServerListRequestHandler>());
+        packetDispatcher.RegisterHandler(host.Services.GetRequiredService<NewsRequestHandler>()); // Added this handler
 
         Console.WriteLine("Packet handlers registered.");
 
