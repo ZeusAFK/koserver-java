@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "sjxnGH3+jh8=",
+  "dgSpecHash": "wPiNKcYwVxs=",
   "success": true,
-  "projectFilePath": "/app/KnightOnline.Common/KnightOnline.Common.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/app/KnightOnline.Domain/KnightOnline.Domain.csproj",
+  "expectedPackageFiles": [
+    "/home/swebot/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512"
+  ],
   "logs": []
 }
