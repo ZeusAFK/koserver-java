@@ -1,6 +1,0 @@
-/app/KnightOnline.Application/obj/Debug/net8.0/KnightOnline.Application.csproj.AssemblyReference.cache
-/app/KnightOnline.Application/obj/Debug/net8.0/KnightOnline.Application.GeneratedMSBuildEditorConfig.editorconfig
-/app/KnightOnline.Application/obj/Debug/net8.0/KnightOnline.Application.AssemblyInfoInputs.cache
-/app/KnightOnline.Application/obj/Debug/net8.0/KnightOnline.Application.AssemblyInfo.cs
-/app/KnightOnline.Application/obj/Debug/net8.0/KnightOnline.Application.csproj.CoreCompileInputs.cache
-/app/KnightOnline.Application/obj/Debug/net8.0/KnightOnline.Application.sourcelink.json
