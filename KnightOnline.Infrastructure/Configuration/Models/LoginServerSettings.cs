@@ -1,3 +1,5 @@
+using System.Collections.Generic; // Required for List
+
 namespace KnightOnline.Infrastructure.Configuration.Models
 {
     public class LoginServerSettings
@@ -8,5 +10,7 @@ namespace KnightOnline.Infrastructure.Configuration.Models
         public string FtpPath { get; set; } = "/";
         public bool AutoCreateAccount { get; set; } = false;
         public string ConnectionString { get; set; } = string.Empty;
+
+        public List<ServerConfigItem> ServerList { get; set; } = new List<ServerConfigItem>();
     }
 }

@@ -1,5 +1,7 @@
 using KnightOnline.Application.Contracts.Infrastructure;
 using KnightOnline.Domain.Client;
+using KnightOnline.Infrastructure.Configuration.Models; // For LoginServerSettings and ServerConfigItem
+using Microsoft.Extensions.Options; // For IOptions
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,34 +10,73 @@ namespace KnightOnline.Infrastructure.Data.Repositories
 {
     public class ServerDetailRepository : IServerDetailRepository
     {
-        // Placeholder: In-memory list. Replace with actual data access (e.g., DbContext).
-        private static readonly List<ServerDetail> _serverDetails = new List<ServerDetail>
+        private readonly LoginServerSettings _loginServerSettings;
+
+        public ServerDetailRepository(IOptions<LoginServerSettings> loginServerSettingsOptions)
         {
-            ServerDetail.Create(1, "Ares", "127.0.0.1", 15001, 1000, "Normal"),
-            ServerDetail.Create(2, "Diez", "127.0.0.1", 15002, 1000, "Normal"),
-            ServerDetail.Create(3, "Gordion", "127.0.0.1", 15003, 1200, "Premium")
-        };
+            _loginServerSettings = loginServerSettingsOptions.Value;
+        }
 
         public Task<ServerDetail?> GetByIdAsync(int serverId)
         {
-            var server = _serverDetails.FirstOrDefault(s => s.Id == serverId);
-            return Task.FromResult(server);
+            var serverConfigItem = _loginServerSettings.ServerList?.FirstOrDefault(s => s.Id == serverId);
+
+            if (serverConfigItem == null)
+            {
+                return Task.FromResult<ServerDetail?>(null);
+            }
+
+            var serverDetail = ServerDetail.Create(
+                serverConfigItem.Id,
+                serverConfigItem.Name,
+                serverConfigItem.IpAddress,
+                serverConfigItem.Port,
+                serverConfigItem.MaxUsers,
+                serverConfigItem.UserMaxFree, // Added
+                serverConfigItem.Category
+            );
+            // Note: UserCount in ServerConfigItem is likely a default/initial value.
+            // serverDetail.UpdateCurrentUserCount(serverConfigItem.UserCount); // CurrentUsers is initialized to 0 by ServerDetail.Create
+
+            return Task.FromResult<ServerDetail?>(serverDetail);
         }
 
         public Task<IEnumerable<ServerDetail>> GetAllServersAsync()
         {
-            return Task.FromResult<IEnumerable<ServerDetail>>(_serverDetails);
+            if (_loginServerSettings.ServerList == null || !_loginServerSettings.ServerList.Any())
+            {
+                return Task.FromResult(Enumerable.Empty<ServerDetail>());
+            }
+
+            var serverDetails = _loginServerSettings.ServerList.Select(serverConfigItem =>
+                {
+                    var detail = ServerDetail.Create(
+                        serverConfigItem.Id,
+                        serverConfigItem.Name,
+                        serverConfigItem.IpAddress,
+                        serverConfigItem.Port,
+                        serverConfigItem.MaxUsers,
+                        serverConfigItem.UserMaxFree, // Added
+                        serverConfigItem.Category
+                    );
+                    // detail.UpdateCurrentUserCount(serverConfigItem.UserCount); // CurrentUsers is initialized to 0 by ServerDetail.Create
+                    return detail;
+                }
+            ).ToList();
+
+            return Task.FromResult<IEnumerable<ServerDetail>>(serverDetails);
         }
 
-        // Example of how user count might be updated if this repository handles it
+        /*
         public Task UpdateUserCountAsync(int serverId, int userCount)
         {
-            var server = _serverDetails.FirstOrDefault(s => s.Id == serverId);
-            if (server != null)
+            var serverConfigItem = _loginServerSettings.ServerList?.FirstOrDefault(s => s.Id == serverId);
+            if (serverConfigItem != null)
             {
-                server.UpdateCurrentUserCount(userCount);
+                // serverConfigItem.UserCount = userCount;
             }
             return Task.CompletedTask;
         }
+        */
     }
 }

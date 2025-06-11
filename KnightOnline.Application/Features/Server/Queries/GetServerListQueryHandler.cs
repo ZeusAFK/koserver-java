@@ -1,60 +1,55 @@
 using MediatR;
+using KnightOnline.Application.Contracts.Infrastructure; // For IServerDetailRepository
+using KnightOnline.Application.DTOs.Server; // For ServerInfoDto
+// using KnightOnline.Domain.Client; // Not strictly needed if ServerDetail isn't directly used here after mapping
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using KnightOnline.Application.DTOs.Server; // For ServerInfoDto
+using System; // For ArgumentNullException
 
 namespace KnightOnline.Application.Features.Server.Queries
 {
     public class GetServerListQueryHandler : IRequestHandler<GetServerListQuery, GetServerListQuery.Response>
     {
-        // In a real application, this might inject a service or repository to fetch server data,
-        // or IOptions<ServerListConfig> to get it from configuration.
-        public GetServerListQueryHandler()
+        private readonly IServerDetailRepository _serverDetailRepository;
+
+        public GetServerListQueryHandler(IServerDetailRepository serverDetailRepository)
         {
-            // No dependencies for now, using hardcoded data.
+            _serverDetailRepository = serverDetailRepository ?? throw new ArgumentNullException(nameof(serverDetailRepository));
         }
 
-        public Task<GetServerListQuery.Response> Handle(GetServerListQuery request, CancellationToken cancellationToken)
+        public async Task<GetServerListQuery.Response> Handle(GetServerListQuery request, CancellationToken cancellationToken)
         {
-            // Placeholder: Hardcoded server list
-            var servers = new List<ServerInfoDto>
+            var serverDetailsDomain = await _serverDetailRepository.GetAllServersAsync();
+
+            var serverInfoDtos = new List<ServerInfoDto>();
+            if (serverDetailsDomain != null)
             {
-                new ServerInfoDto
+                foreach (var domainServer in serverDetailsDomain)
                 {
-                    ServerId = 1,
-                    Name = "Ares",
-                    Ip = "127.0.0.1", // Or your server's public IP
-                    UserCount = 150,  // Example user count
-                    UserMax = 1000,
-                    UserMaxFree = 800,
-                    Category = 1      // Example category
-                },
-                new ServerInfoDto
-                {
-                    ServerId = 2,
-                    Name = "Diez",
-                    Ip = "127.0.0.1",
-                    UserCount = 250,
-                    UserMax = 1000,
-                    UserMaxFree = 800,
-                    Category = 1
-                },
-                new ServerInfoDto
-                {
-                    ServerId = 3,
-                    Name = "Gordion",
-                    Ip = "127.0.0.1",
-                    UserCount = 100,
-                    UserMax = 1200,
-                    UserMaxFree = 900,
-                    Category = 2
+                    var dto = new ServerInfoDto
+                    {
+                        ServerId = domainServer.Id,
+                        Name = domainServer.Name,
+                        Ip = domainServer.IpAddress,
+                        Port = domainServer.Port, // Added Port mapping
+                        UserCount = domainServer.CurrentUsers,
+                        UserMax = domainServer.MaxUsers,
+                        Category = domainServer.ServerCategory switch
+                        {
+                            "Premium" => 2,
+                            "Normal" => 1,
+                            _ => 0
+                        },
+                        UserMaxFree = domainServer.UserMaxFree // Corrected mapping
+                    };
+                    serverInfoDtos.Add(dto);
                 }
-            };
+            }
 
-            var response = new GetServerListQuery.Response(request.Echo, servers);
-
-            return Task.FromResult(response);
+            var response = new GetServerListQuery.Response(request.Echo, serverInfoDtos);
+            return response;
         }
     }
 }
