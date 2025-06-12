@@ -28,6 +28,9 @@
             "projectReferences": {
               "/app/KnightOnline.Domain/KnightOnline.Domain.csproj": {
                 "projectPath": "/app/KnightOnline.Domain/KnightOnline.Domain.csproj"
+              },
+              "/app/KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj": {
+                "projectPath": "/app/KnightOnline.Infrastructure/KnightOnline.Infrastructure.csproj"
               }
             }
           }
@@ -158,9 +161,6 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/app/KnightOnline.Application/KnightOnline.Application.csproj": {
-                "projectPath": "/app/KnightOnline.Application/KnightOnline.Application.csproj"
-              },
               "/app/KnightOnline.Domain/KnightOnline.Domain.csproj": {
                 "projectPath": "/app/KnightOnline.Domain/KnightOnline.Domain.csproj"
               }
@@ -195,6 +195,10 @@
             "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
               "version": "[9.0.5, )"
+            },
+            "Microsoft.Extensions.Hosting.Abstractions": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             }
           },
           "imports": [
