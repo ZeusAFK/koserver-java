@@ -11,7 +11,7 @@ using KnightOnline.Infrastructure.Configuration; // For AppSettings
 using KnightOnline.Infrastructure.Configuration.Models; // For LoginServerSettings, NetworkSettings
 using System;
 using System.Threading.Tasks;
-using KnightOnline.LoginServer.Features.System.Handlers;
+using KnightOnline.LoginServer.Features.System.Handlers; // For VersionCheckHandler
 using KnightOnline.LoginServer.Features.Authentication.Handlers;
 using KnightOnline.LoginServer.Features.Security.Handlers;
 using KnightOnline.LoginServer.Features.Server.Handlers;
@@ -25,21 +25,25 @@ namespace KnightOnline.LoginServer
         {
             var host = CreateHostBuilder(args).Build();
 
-            // Manual packet handler registration and listener start is removed.
-            // IHostedService will manage SocketListener.
-            // Packet handler registration should be done when PacketDispatcher is built,
-            // or via another mechanism if handlers are resolved from DI.
+            ConfigurePacketHandlers(host.Services);
 
             Console.WriteLine("LoginServer starting host.RunAsync()...");
-            // For testing configuration, you could resolve and print some settings:
-            /*
-            var loginSettings = host.Services.GetRequiredService<IOptions<LoginServerSettings>>().Value;
-            Console.WriteLine($"Login Server Port: {loginSettings.Network.BindPort}");
-            var appSettings = host.Services.GetRequiredService<IOptions<AppSettings>>().Value;
-            Console.WriteLine($"Login Server FTP URL from AppSettings: {appSettings.LoginServer.FtpUrl}");
-            */
             await host.RunAsync();
             Console.WriteLine("LoginServer host has stopped.");
+        }
+
+        static void ConfigurePacketHandlers(IServiceProvider services)
+        {
+            var dispatcher = services.GetRequiredService<IPacketDispatcher>();
+
+            // Resolve and register all required handlers
+            dispatcher.RegisterHandler(services.GetRequiredService<VersionCheckHandler>());
+            dispatcher.RegisterHandler(services.GetRequiredService<LoginRequestHandler>());
+            dispatcher.RegisterHandler(services.GetRequiredService<EncryptionKeyExchangeHandler>());
+            dispatcher.RegisterHandler(services.GetRequiredService<ServerListRequestHandler>());
+            dispatcher.RegisterHandler(services.GetRequiredService<NewsRequestHandler>());
+
+            Console.WriteLine("Packet handlers registered with dispatcher.");
         }
 
         static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -65,9 +69,7 @@ namespace KnightOnline.LoginServer
                     services.AddDbContext<AppDbContext>(options =>
                         options.UseInMemoryDatabase("KnightOnlineLoginDB"));
                     services.AddScoped<KnightOnline.Application.Contracts.Infrastructure.IAccountRepository, KnightOnline.Infrastructure.Data.Repositories.AccountRepository>();
-                    // Register IServerDetailRepository if it's used by any services that might be resolved
                     services.AddScoped<KnightOnline.Application.Contracts.Infrastructure.IServerDetailRepository, KnightOnline.Infrastructure.Data.Repositories.ServerDetailRepository>();
-
 
                     // Networking Services
                     services.AddSingleton<PacketFrameReader>();
@@ -76,7 +78,6 @@ namespace KnightOnline.LoginServer
                     // Register SocketListener as IHostedService
                     services.AddSingleton<IHostedService, SocketListener>(serviceProvider =>
                     {
-                        // Resolve NetworkSettings from IOptions<LoginServerSettings>
                         var loginServerSettings = serviceProvider.GetRequiredService<IOptions<LoginServerSettings>>().Value;
                         if (loginServerSettings?.Network == null)
                         {
@@ -85,28 +86,13 @@ namespace KnightOnline.LoginServer
 
                         var packetDispatcher = serviceProvider.GetRequiredService<IPacketDispatcher>();
                         var packetFrameReader = serviceProvider.GetRequiredService<PacketFrameReader>();
-                        // var logger = serviceProvider.GetService<ILogger<SocketListener>>(); // Optional: if you want to inject logger
-
-                        // TODO: The IPacketDispatcher needs to be populated with its handlers.
-                        // This could be done here by resolving all IMessageHandler implementations and registering them,
-                        // or PacketDispatcher could take IEnumerable<IMessageHandler> in its constructor,
-                        // and DI would provide them if they are registered.
-                        // For now, dispatcher is "empty" as per prompt.
-                        // Example of manual registration if needed (but better to do it via DI if handlers are services):
-                        /*
-                        var versionHandler = serviceProvider.GetRequiredService<VersionRequestHandler>();
-                        packetDispatcher.RegisterHandler(versionHandler);
-                        // ... register other handlers ...
-                        */
+                        // var logger = serviceProvider.GetService<ILogger<SocketListener>>();
 
                         return new SocketListener(loginServerSettings.Network, packetDispatcher, packetFrameReader /*, logger */);
                     });
 
-                    // Register Packet Handlers (if they are to be resolved by PacketDispatcher itself, or for other uses)
-                    // If PacketDispatcher is responsible for resolving its own handlers, this might not be needed here.
-                    // If they are injected into PacketDispatcher, then PacketDispatcher needs to be modified.
-                    // For now, keeping them as transient services if they need to be resolved by something.
-                    services.AddTransient<VersionRequestHandler>();
+                    // Register Packet Handlers as transient services
+                    services.AddTransient<VersionCheckHandler>(); // Changed from VersionRequestHandler
                     services.AddTransient<LoginRequestHandler>();
                     services.AddTransient<EncryptionKeyExchangeHandler>();
                     services.AddTransient<ServerListRequestHandler>();
