@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\KnightOnline.Domain\KnightOnline.Domain.csproj" />
-    <ProjectReference Include="..\KnightOnline.Infrastructure\KnightOnline.Infrastructure.csproj" />
+    <ProjectReference Include="..\KnightOnline.Application.Contracts\KnightOnline.Application.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
