@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KnightOnline.Domain\KnightOnline.Domain.csproj" />
+    <ProjectReference Include="..\KnightOnline.Infrastructure\KnightOnline.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

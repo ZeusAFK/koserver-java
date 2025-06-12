@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\KnightOnline.Application\KnightOnline.Application.csproj" />
     <ProjectReference Include="..\KnightOnline.Domain\KnightOnline.Domain.csproj" />
   </ItemGroup>
 
@@ -12,6 +11,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
   </ItemGroup>
 
   <PropertyGroup>
