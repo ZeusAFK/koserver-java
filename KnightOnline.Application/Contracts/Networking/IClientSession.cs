@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using KnightOnline.Domain.Networking; // For Packet
+using System.Numerics; // For BigInteger
 
 namespace KnightOnline.Application.Contracts.Networking
 {
@@ -9,6 +10,9 @@ namespace KnightOnline.Application.Contracts.Networking
         string SessionId { get; }
         Task SendPacketAsync(Packet packet);
         void Close();
-        // Other properties like IPAddress, State, PlayerData etc. might be added later
+
+        // Added for encryption
+        void ActivateEncryption(BigInteger publicKey);
+        bool IsEncrypted { get; }
     }
 }

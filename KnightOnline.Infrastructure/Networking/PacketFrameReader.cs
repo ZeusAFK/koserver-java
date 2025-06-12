@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using KnightOnline.Domain.Networking; // For Packet class
+using KnightOnline.Infrastructure.Security; // For Cryptor
 // using Microsoft.Extensions.Logging; // Optional
 
 namespace KnightOnline.Infrastructure.Networking
@@ -22,7 +23,7 @@ namespace KnightOnline.Infrastructure.Networking
         // }
         public PacketFrameReader() {} // Constructor
 
-        public async Task<Packet?> ReadNextPacketAsync(NetworkStream stream, CancellationToken cancellationToken)
+        public async Task<Packet?> ReadNextPacketAsync(NetworkStream stream, Cryptor? cryptor, CancellationToken cancellationToken)
         {
             try
             {
@@ -58,6 +59,17 @@ namespace KnightOnline.Infrastructure.Networking
                 byte[] dataBuffer = new byte[dataLength];
                 bytesRead = await ReadExactlyAsync(stream, dataBuffer, cancellationToken);
                 if (bytesRead < dataLength) return null;
+
+                // DECRYPTION STEP
+                if (cryptor != null)
+                {
+                    dataBuffer = cryptor.Process(dataBuffer);
+                    // After decryption, the actual data length might have changed if padding was involved
+                    // and if the cryptor handles unpadding and returns a new buffer.
+                    // For the current Cryptor (JvCrypt), it's an in-place XOR, so length doesn't change.
+                    // If it could change, the `dataLength` variable would need to be updated,
+                    // and the opcode/payload extraction below would use the new length.
+                }
 
                 // 4. Read Tail (2 bytes)
                 byte[] tailBuffer = new byte[2];

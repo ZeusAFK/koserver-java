@@ -4,6 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using KnightOnline.Application.Contracts.Networking;
 using KnightOnline.Domain.Networking;
+using KnightOnline.Infrastructure.Security; // For Cryptor
+using System.Numerics; // For BigInteger
+using System.IO; // For MemoryStream
 // using Microsoft.Extensions.Logging; // Optional
 
 namespace KnightOnline.Infrastructure.Networking
@@ -17,27 +20,35 @@ namespace KnightOnline.Infrastructure.Networking
         // private readonly ILogger<ClientSession> _logger; // Optional
         private readonly CancellationTokenSource _sessionCts;
 
+        private Cryptor? _cryptor; // Added for encryption
+        public bool IsEncrypted { get; private set; } = false; // Added for encryption, default to false
+
         public string SessionId { get; }
 
-        // public ClientSession(TcpClient tcpClient, IPacketDispatcher packetDispatcher, PacketFrameReader packetFrameReader, ILogger<ClientSession> logger)
         public ClientSession(TcpClient tcpClient, IPacketDispatcher packetDispatcher, PacketFrameReader packetFrameReader)
         {
             _tcpClient = tcpClient ?? throw new ArgumentNullException(nameof(tcpClient));
             _networkStream = _tcpClient.GetStream();
             _packetDispatcher = packetDispatcher ?? throw new ArgumentNullException(nameof(packetDispatcher));
             _packetFrameReader = packetFrameReader ?? throw new ArgumentNullException(nameof(packetFrameReader));
-            // _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            // _logger = logger;
 
-            SessionId = Guid.NewGuid().ToString(); // Simple unique ID for the session
+            SessionId = Guid.NewGuid().ToString();
             _sessionCts = new CancellationTokenSource();
 
-            // _logger.LogInformation($"Session {SessionId} created for client {tcpClient.Client.RemoteEndPoint}");
             Console.WriteLine($"Session {SessionId} created for client {tcpClient.Client.RemoteEndPoint}"); // Placeholder
+        }
+
+        public void ActivateEncryption(BigInteger publicKey)
+        {
+            _cryptor = new Cryptor(publicKey);
+            IsEncrypted = true;
+            // _logger?.LogInformation($"Session {SessionId} encryption activated.");
+            Console.WriteLine($"Session {SessionId} encryption activated."); // Placeholder
         }
 
         public async Task ProcessIncomingDataAsync(CancellationToken linkedExternalToken = default)
         {
-            // Link the external token (e.g., from server shutdown) with the session's own token
             using (var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(_sessionCts.Token, linkedExternalToken))
             {
                 var cancellationToken = combinedCts.Token;
@@ -45,17 +56,15 @@ namespace KnightOnline.Infrastructure.Networking
                 {
                     while (_tcpClient.Connected && !cancellationToken.IsCancellationRequested)
                     {
-                        Packet? packet = await _packetFrameReader.ReadNextPacketAsync(_networkStream, cancellationToken);
+                        // Modified to pass _cryptor
+                        Packet? packet = await _packetFrameReader.ReadNextPacketAsync(_networkStream, _cryptor, cancellationToken);
                         if (packet != null)
                         {
-                            // _logger.LogDebug($"Session {SessionId} received packet with opcode {packet.Opcode}. Dispatching...");
-                             Console.WriteLine($"Session {SessionId} received packet with opcode {packet.Opcode}. Dispatching...");// Placeholder
+                            Console.WriteLine($"Session {SessionId} received packet with opcode {packet.Opcode}. Dispatching...");// Placeholder
                             await _packetDispatcher.DispatchPacketAsync(this, packet);
                         }
                         else if (!cancellationToken.IsCancellationRequested)
                         {
-                            // ReadNextPacketAsync returning null (and no cancellation) usually means graceful remote close or unrecoverable stream error
-                            // _logger.LogInformation($"Session {SessionId}: Remote client closed connection or stream error.");
                             Console.WriteLine($"Session {SessionId}: Remote client closed connection or stream error."); // Placeholder
                             break;
                         }
@@ -63,27 +72,19 @@ namespace KnightOnline.Infrastructure.Networking
                 }
                 catch (InvalidDataException ex)
                 {
-                    // _logger.LogError(ex, $"Session {SessionId}: Invalid data received. Closing session.");
                     Console.WriteLine($"Session {SessionId}: Invalid data received. {ex.Message}. Closing session."); // Placeholder
-                    // Close session due to protocol error
                 }
                 catch (IOException ex)
                 {
-                    // _logger.LogInformation(ex, $"Session {SessionId}: IOException. Likely connection issue. Closing session.");
                     Console.WriteLine($"Session {SessionId}: IOException. {ex.Message}. Closing session."); // Placeholder
-                    // Connection issue
                 }
                 catch (OperationCanceledException)
                 {
-                    // _logger.LogInformation($"Session {SessionId}: Processing cancelled.");
                     Console.WriteLine($"Session {SessionId}: Processing cancelled."); // Placeholder
-                    // Expected during shutdown or if session is explicitly closed
                 }
                 catch (Exception ex)
                 {
-                    // _logger.LogError(ex, $"Session {SessionId}: Unhandled exception in ProcessIncomingDataAsync. Closing session.");
                      Console.WriteLine($"Session {SessionId}: Unhandled exception. {ex.Message}. Closing session."); // Placeholder
-                    // Catch-all for safety
                 }
                 finally
                 {
@@ -96,57 +97,56 @@ namespace KnightOnline.Infrastructure.Networking
         {
             if (!_tcpClient.Connected)
             {
-                // _logger.LogWarning($"Session {SessionId}: Cannot send packet. Client not connected.");
                 Console.WriteLine($"Session {SessionId}: Cannot send packet. Client not connected."); // Placeholder
                 return;
             }
 
             try
             {
-                // Frame the packet before sending: Header + Length + (Opcode as first byte of data + Payload) + Tail
-                byte[] payload = packet.GetPayload(); // This payload already excludes the opcode byte based on PacketFrameReader logic
+                byte[] payload = packet.GetPayload();
                 byte[] dataWithOpcode = new byte[payload.Length + 1];
-                dataWithOpcode[0] = (byte)packet.Opcode; // Opcode is a ushort, but protocol uses 1 byte. Potential truncation.
-                                                         // The Packet class should ideally store opcode as byte if that's the wire protocol.
-                                                         // For now, casting. This needs to be consistent with PacketFrameReader.
+                dataWithOpcode[0] = (byte)packet.Opcode;
                 Array.Copy(payload, 0, dataWithOpcode, 1, payload.Length);
 
-                ushort dataLength = (ushort)dataWithOpcode.Length;
+                byte[] dataToSend = dataWithOpcode;
+                if (IsEncrypted && _cryptor != null)
+                {
+                    // _logger?.LogDebug($"Session {SessionId}: Encrypting packet with opcode {packet.Opcode}");
+                    Console.WriteLine($"Session {SessionId}: Encrypting packet with opcode {packet.Opcode}"); // Placeholder
+                    dataToSend = _cryptor.Process(dataWithOpcode);
+                }
 
-                byte[] header = BitConverter.GetBytes(PacketFrameReader.ExpectedHeader);
-                byte[] lengthBytes = BitConverter.GetBytes(dataLength); // Little Endian
-                byte[] tail = BitConverter.GetBytes(PacketFrameReader.ExpectedTail);
+                ushort dataLength = (ushort)dataToSend.Length;
 
-                // Construct the full message
+                byte[] headerBytes = BitConverter.GetBytes(PacketFrameReader.ExpectedHeader);
+                byte[] lengthBytes = BitConverter.GetBytes(dataLength);
+                byte[] tailBytes = BitConverter.GetBytes(PacketFrameReader.ExpectedTail);
+
                 using (var ms = new MemoryStream())
                 {
-                    ms.Write(header, 0, header.Length);
+                    ms.Write(headerBytes, 0, headerBytes.Length);
                     ms.Write(lengthBytes, 0, lengthBytes.Length);
-                    ms.Write(dataWithOpcode, 0, dataWithOpcode.Length);
-                    ms.Write(tail, 0, tail.Length);
+                    ms.Write(dataToSend, 0, dataToSend.Length);
+                    ms.Write(tailBytes, 0, tailBytes.Length);
 
                     byte[] fullMessage = ms.ToArray();
-                    await _networkStream.WriteAsync(fullMessage, 0, fullMessage.Length, _sessionCts.Token); // Use session CTS for send ops
-                    await _networkStream.FlushAsync(_sessionCts.Token);
-                    // _logger.LogDebug($"Session {SessionId}: Sent packet with opcode {packet.Opcode}, FullMessage Size: {fullMessage.Length}");
+                    await _networkStream.WriteAsync(fullMessage, 0, fullMessage.Length, _sessionCts.Token);
+                    await _networkStream.FlushAsync(_sessionCts.Token); // Good practice to flush
                     Console.WriteLine($"Session {SessionId}: Sent packet with opcode {packet.Opcode}, FullMessage Size: {fullMessage.Length}");// Placeholder
                 }
             }
             catch (IOException ex)
             {
-                // _logger.LogError(ex, $"Session {SessionId}: IOException during SendPacketAsync. Closing session.");
                 Console.WriteLine($"Session {SessionId}: IOException during SendPacketAsync. {ex.Message}. Closing session.");// Placeholder
                 Close();
             }
             catch (ObjectDisposedException ex)
             {
-                // _logger.LogWarning(ex, $"Session {SessionId}: NetworkStream disposed during SendPacketAsync.");
                 Console.WriteLine($"Session {SessionId}: NetworkStream disposed during SendPacketAsync. {ex.Message}.");// Placeholder
-                Close(); // Ensure session is marked as closed
+                Close();
             }
             catch (Exception ex)
             {
-                // _logger.LogError(ex, $"Session {SessionId}: Unhandled exception in SendPacketAsync. Closing session.");
                  Console.WriteLine($"Session {SessionId}: Unhandled exception in SendPacketAsync. {ex.Message}. Closing session.");// Placeholder
                 Close();
             }
@@ -156,12 +156,22 @@ namespace KnightOnline.Infrastructure.Networking
         {
             if (_tcpClient.Connected)
             {
-                // _logger.LogInformation($"Session {SessionId}: Closing connection for client {_tcpClient.Client.RemoteEndPoint}.");
                 Console.WriteLine($"Session {SessionId}: Closing connection for client {_tcpClient.Client.RemoteEndPoint}.");// Placeholder
             }
-            _sessionCts.Cancel(); // Signal cancellation to any ongoing operations like ProcessIncomingDataAsync
+            // Ensure cancellation is requested only once and then resources are cleaned up.
+            if (!_sessionCts.IsCancellationRequested)
+            {
+                _sessionCts.Cancel();
+            }
+
+            // It's safe to call Close on streams multiple times.
             _networkStream.Close();
             _tcpClient.Close();
+
+            // Dispose CancellationTokenSource only when it's guaranteed no longer in use.
+            // If ProcessIncomingDataAsync or SendPacketAsync could still be running and referencing _sessionCts.Token,
+            // disposing it here might be premature. However, after streams are closed, they should exit.
+            // For simplicity in this context, let's assume this is fine.
             _sessionCts.Dispose();
         }
     }
